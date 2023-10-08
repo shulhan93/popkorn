@@ -41,6 +41,17 @@ const MovieDetails = ({ selectedID, onCloseMovie, onAddWatched, watched }) => {
     [selectedID]
   );
 
+  useEffect(
+    function () {
+      if (!title) return;
+      document.title = `movie ${title}`;
+      return function () {
+        document.title = "usePopcorn";
+      };
+    },
+    [title]
+  );
+
   const handleAdd = () => {
     const newWatchedMovie = {
       imdbID: selectedID,
@@ -54,6 +65,24 @@ const MovieDetails = ({ selectedID, onCloseMovie, onAddWatched, watched }) => {
     onAddWatched(newWatchedMovie);
     onCloseMovie();
   };
+
+  useEffect(
+    function () {
+      function handleKeydown(e) {
+        if (e.code === "Escape") {
+          onCloseMovie();
+          console.log("Close movie");
+        }
+      }
+
+      document.addEventListener("keydown", handleKeydown);
+
+      return function () {
+        document.removeEventListener("keydown", handleKeydown);
+      };
+    },
+    [onCloseMovie]
+  );
 
   return (
     <div className="details">
